@@ -9,7 +9,9 @@ void init_drawer()
     connect_drawer_signals();
     populate_drawer();
     g_signal_connect(navbtn, "clicked", (GCallback)show_drawer, NULL);
-    gtk_paned_pack1((GtkPaned*)paned, drawer, FALSE, TRUE);
+    gtk_paned_set_start_child((GtkPaned*)paned, drawer);
+    gtk_paned_set_resize_start_child((GtkPaned*)paned, TRUE);
+    gtk_paned_set_shrink_start_child((GtkPaned*)paned, FALSE);
 }
 
 static void instantiate_drawer()
@@ -29,7 +31,7 @@ static void connect_drawer_signals()
 
 static void populate_drawer()
 {
-    gtk_container_add((GtkContainer*)drawer, drawerlabel);
+    gtk_box_append((GtkBox*)drawer, drawerlabel);
 }
 
 static void show_drawer()

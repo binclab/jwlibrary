@@ -1,0 +1,1 @@
+gui_sources = files(['window.c', 'navbar.c', 'drawer.c', 'winstack.c'])

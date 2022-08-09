@@ -7,6 +7,7 @@ void init_window()
     construct_main_window();
     construct_media_window();
     gtk_window_present((GtkWindow*)window);
+    gtk_window_set_child((GtkWindow*)winbox, winbox);
 }
 
 static void get_managers()
@@ -17,7 +18,12 @@ static void get_managers()
 static void get_devices()
 {
     display = gdk_display_get_default();
-    projector = gdk_display_get_monitor(display, 1);
+    projector = get_monitor(1);
+}
+
+static GdkMonitor *get_monitor(int position){
+    GListModel *list = gdk_display_get_monitors(display);
+    return g_list_model_get_item(list, 1);
 }
 
 static void construct_main_window()
@@ -35,8 +41,8 @@ static void construct_main_window()
     init_navbar();
     init_drawer();
     init_winstack();
-    gtk_container_add((GtkContainer*)winbox, paned);
-    gtk_container_add((GtkContainer*)window, winbox);
+    gtk_box_append((GtkBox*)winbox, paned);
+    gtk_box_append((GtkBox*)winbox, winbox);
 }
 
 static void construct_media_window()
@@ -47,7 +53,7 @@ static void construct_media_window()
     if(projector)
     {
         gtk_window_fullscreen_on_monitor((GtkWindow*)mediawindow, projector);
-        gtk_container_add((GtkContainer*)mediawindow, yeartext);
+        gtk_window_set_child((GtkWindow*)mediawindow, yeartext);
         gtk_window_present((GtkWindow*)mediawindow);
     }
     g_signal_connect(display, "monitor-added", (GCallback)monitor_added, NULL);
@@ -56,7 +62,7 @@ static void construct_media_window()
 
 static void monitor_added()
 {
-    projector = gdk_display_get_monitor(display, 1);
+    projector = get_monitor(1);
     if(projector && project)
         gtk_window_fullscreen_on_monitor((GtkWindow*)mediawindow, projector);
     else
@@ -65,7 +71,8 @@ static void monitor_added()
 
 static void monitor_removed()
 {
-    if(gdk_display_get_n_monitors(display) == 1)
+    GListModel *list = gdk_display_get_monitors(display);
+    if(g_list_model_get_n_items(list) == 1)
     {
         gtk_window_unfullscreen((GtkWindow*)mediawindow);
         gtk_widget_set_size_request(mediawindow, 1024, 576);
