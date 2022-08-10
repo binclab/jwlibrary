@@ -3,7 +3,7 @@
 
 #include "shared.h"
 
-GtkWidget *winstack;
+GtkWidget *winstack, *medialibrary;
 
 void init_winstack();
 

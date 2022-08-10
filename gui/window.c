@@ -7,7 +7,6 @@ void init_window()
     construct_main_window();
     construct_media_window();
     gtk_window_present((GtkWindow*)window);
-    gtk_window_set_child((GtkWindow*)winbox, winbox);
 }
 
 static void get_managers()
@@ -23,6 +22,7 @@ static void get_devices()
 
 static GdkMonitor *get_monitor(int position){
     GListModel *list = gdk_display_get_monitors(display);
+    printf("Monitors %i\n", g_list_model_get_n_items(list));
     return g_list_model_get_item(list, 1);
 }
 
@@ -32,8 +32,8 @@ static void construct_main_window()
     winbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
     gtk_window_set_application((GtkWindow*)window, jwlibrary);
-    gtk_window_set_default_size((GtkWindow*)window, 854, 480);
-    gtk_widget_set_size_request(window, 854, 480);
+    gtk_window_set_default_size((GtkWindow*)window, 640, 240);
+    gtk_widget_set_size_request(window, 640, 240);
     gtk_widget_set_valign(window, GTK_ALIGN_CENTER);
     gtk_widget_set_halign(window, GTK_ALIGN_CENTER);
     gtk_paned_set_wide_handle((GtkPaned*)paned, TRUE);
@@ -42,7 +42,7 @@ static void construct_main_window()
     init_drawer();
     init_winstack();
     gtk_box_append((GtkBox*)winbox, paned);
-    gtk_box_append((GtkBox*)winbox, winbox);
+    gtk_window_set_child((GtkWindow*)window, winbox);
 }
 
 static void construct_media_window()
@@ -53,9 +53,10 @@ static void construct_media_window()
     if(projector)
     {
         gtk_window_fullscreen_on_monitor((GtkWindow*)mediawindow, projector);
-        gtk_window_set_child((GtkWindow*)mediawindow, yeartext);
-        gtk_window_present((GtkWindow*)mediawindow);
     }
+    gtk_widget_set_size_request(mediawindow, 400, 224);
+    gtk_window_set_child((GtkWindow*)mediawindow, yeartext);
+    gtk_window_present((GtkWindow*)mediawindow);
     g_signal_connect(display, "monitor-added", (GCallback)monitor_added, NULL);
     g_signal_connect(display, "monitor-removed", (GCallback)monitor_removed, NULL);
 }
@@ -72,6 +73,7 @@ static void monitor_added()
 static void monitor_removed()
 {
     GListModel *list = gdk_display_get_monitors(display);
+    printf("%i\n", g_list_model_get_n_items(list));
     if(g_list_model_get_n_items(list) == 1)
     {
         gtk_window_unfullscreen((GtkWindow*)mediawindow);

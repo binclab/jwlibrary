@@ -11,7 +11,7 @@ void init_drawer()
     g_signal_connect(navbtn, "clicked", (GCallback)show_drawer, NULL);
     gtk_paned_set_start_child((GtkPaned*)paned, drawer);
     gtk_paned_set_resize_start_child((GtkPaned*)paned, TRUE);
-    gtk_paned_set_shrink_start_child((GtkPaned*)paned, FALSE);
+    gtk_paned_set_shrink_start_child((GtkPaned*)paned, TRUE);
 }
 
 static void instantiate_drawer()
