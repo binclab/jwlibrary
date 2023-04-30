@@ -6,6 +6,7 @@
 			"label": "Configure",
 			"command": "/usr/bin/meson",
 			"args": [
+				"setup",
 				".build"
 			],
 			"options": {

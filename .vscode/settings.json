@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "winstack.h": "c"
+    },
+    "cmake.configureOnOpen": false
+}
