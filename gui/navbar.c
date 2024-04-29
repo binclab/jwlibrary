@@ -2,12 +2,11 @@
 
 void init_navbar()
 {
-    navbar = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    
     instantiate_navbar();
     set_navbar_icons();
     connect_navbar_signals();
     populate_navbar();
-    gtk_box_append((GtkBox*)winbox, navbar);
 }
 
 static void instantiate_navbar()
@@ -23,7 +22,6 @@ static void instantiate_navbar()
     mediabtn = gtk_button_new();
     meetingsbtn = gtk_button_new();
     wolbtn = gtk_button_new();
-    wofbtn = gtk_button_new();
     playerbtn = gtk_button_new();
     settingsbtn = gtk_button_new();
 }
@@ -48,7 +46,6 @@ static void populate_navbar()
     gtk_box_append((GtkBox*)navbar, mediabtn);
     gtk_box_append((GtkBox*)navbar, meetingsbtn);
     gtk_box_append((GtkBox*)navbar, wolbtn);
-    gtk_box_append((GtkBox*)navbar, wofbtn);
     gtk_box_append((GtkBox*)navbar, playerbtn);
     gtk_box_append((GtkBox*)navbar, space);
     gtk_box_append((GtkBox*)navbar, settingsbtn);

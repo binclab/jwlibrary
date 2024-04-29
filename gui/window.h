@@ -3,9 +3,7 @@
 
 #include "shared.h"
 
-GtkWidget *window, *mediawindow, *winbox, *paned;
-
-void init_window();
+void init_window(GtkApplication *application, gchar *home);
 static void get_managers(), get_devices(), construct_main_window(), construct_media_window();
 static void monitor_added(), monitor_removed();
 static GdkMonitor *get_monitor(int position);

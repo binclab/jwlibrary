@@ -9,11 +9,10 @@ extern GApplication *gapp;
 extern GdkDisplay *display;
 extern GdkMonitor *projector;
 extern GdkSurface *surface;
-extern GtkApplication *jwlibrary;
-extern GtkWidget *window, *navbar, *drawer, *winstack, *paned, *winbox;
-extern GtkWidget *navbtn, *navcloseimg, *navopenimg;
 
-extern void init_window(), init_navbar(), init_drawer(), init_winstack(), quit();
+extern void init_window(), init_winstack(), quit();
+
+extern gchar *home;
 
 
 #endif // SHARED_H_INCLUDED

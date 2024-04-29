@@ -5,7 +5,7 @@
 
 GtkWidget *navbar, *navcloseimg, *navopenimg, *space;
 GtkWidget *navbtn, *homebtn, *biblebtn, *publicbtn, *mediabtn;
-GtkWidget *meetingsbtn, *wolbtn, *wofbtn, *playerbtn, *settingsbtn;
+GtkWidget *meetingsbtn, *wolbtn, *playerbtn, *settingsbtn;
 
 void init_navbar();
 static void instantiate_navbar(), set_navbar_icons();

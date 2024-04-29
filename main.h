@@ -3,10 +3,11 @@
 
 #include "gui/shared.h"
 
-GApplication *gapp;
 GdkDisplay *display;
 GdkMonitor *projector;
 GdkSurface *surface;
-GtkApplication *jwlibrary;
+GtkApplication *application;
+
+gchar *home;
 
 #endif // MAIN_H_INCLUDED
