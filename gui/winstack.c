@@ -1,10 +1,7 @@
 #include "winstack.h"
 
-GtkWidget *get_navbar(GtkPaned *paned)
-{
-    navbar = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+GtkWidget *create_winstack(){
     winstack = gtk_stack_new();
-    gtk_paned_set_end_child((GtkPaned *)paned, winstack);
     init_home();
     init_bible();
     init_publications();
@@ -13,7 +10,7 @@ GtkWidget *get_navbar(GtkPaned *paned)
     init_wol();
     init_player();
     init_settings();
-    return navbar;
+    return winstack;
 }
 
 static void init_home()
@@ -57,8 +54,8 @@ static void init_wol()
     WebKitCookieManager *cookiejar = webkit_network_session_get_cookie_manager(session);
     webkit_cookie_manager_set_persistent_storage(cookiejar, storage, 1);
     webkit_web_view_load_uri((WebKitWebView *)webview, uri);
-    page[5] = gtk_stack_add_child((GtkStack *)winstack, medialibrary);
-    gtk_stack_add_titled((GtkStack *)winstack, medialibrary, "WOL", "WOL");
+    page[5] = gtk_stack_add_child((GtkStack *)winstack, webview);
+    gtk_stack_add_titled((GtkStack *)winstack, webview, "WOL", "WOL");
 }
 
 static void init_player()

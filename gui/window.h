@@ -1,13 +1,22 @@
 #ifndef WINDOW_H_INCLUDED
 #define WINDOW_H_INCLUDED
 
-#include "shared.h"
+#include "gtk/gtk.h"
 
-void init_window(GtkApplication *application, gchar *home);
+GApplication *gapp;
+GdkDisplay *display;
+GdkMonitor *projector;
+GdkSurface *surface;
+
+gchar *home;
+
+static void init_window(GtkApplication *application, gchar *home);
 static void get_managers(), get_devices(), construct_main_window(), construct_media_window();
 static void monitor_added(), monitor_removed();
 static GdkMonitor *get_monitor(int position);
-extern void init_navbar(), init_drawer(), init_winstack();
+extern GtkWidget *create_navbar(), *create_drawer(), *create_winstack();
+
+GtkWidget *window, *mediawindow;
 
 bool project = true;
 
