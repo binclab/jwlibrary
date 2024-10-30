@@ -12,14 +12,6 @@ int main(int argc, char *argv[])
     return status;
 }
 
-static gboolean move_handle(GtkPaned *paned, GtkScrollType *scroll_type, gpointer user_data)
-{
-    gboolean move = TRUE;
-    printf("%i\n", gtk_paned_get_position(paned));
-
-    return move;
-}
-
 void init_window(GtkApplication *application, gchar *home)
 {
     get_managers();
@@ -27,18 +19,30 @@ void init_window(GtkApplication *application, gchar *home)
     GtkWidget *window = gtk_application_window_new(application);
     GtkWidget *paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
     GtkWidget *winbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    GtkWidget *winstack = create_winstack();
+    GtkWidget *drawer = create_drawer((GtkStack *)winstack);
+    GtkIconTheme *icon_theme = gtk_icon_theme_get_for_display(display);
+    gtk_icon_theme_add_resource_path(icon_theme, "/com/binclab/jwlibrary");
+
+    if (gtk_icon_theme_has_icon(icon_theme, "my-icon") != 1)
+    {
+        printf("No Icon Found\n");
+    }
+
+    gtk_window_set_default_icon_name("ic_jwlibrary");
+    gtk_window_set_title((GtkWindow*)window, "JW Library");
+    gtk_window_set_icon_name((GtkWindow*)window, "ic_jwlibrary");
     gtk_window_set_default_size((GtkWindow *)window, 854, 480);
     gtk_widget_set_size_request(window, 854, 480);
     gtk_widget_set_hexpand(paned, TRUE);
     gtk_paned_set_wide_handle((GtkPaned *)paned, TRUE);
     gtk_paned_set_position((GtkPaned *)paned, 0);
-    g_signal_connect(paned, "size-allocate", (GCallback)move_handle, NULL);
     gtk_paned_set_shrink_start_child((GtkPaned *)paned, TRUE);
     gtk_paned_set_resize_start_child((GtkPaned *)paned, FALSE);
     gtk_paned_set_shrink_end_child((GtkPaned *)paned, FALSE);
     gtk_paned_set_resize_end_child((GtkPaned *)paned, TRUE);
-    gtk_paned_set_start_child((GtkPaned *)paned, create_drawer());
-    gtk_paned_set_end_child((GtkPaned *)paned, create_winstack());
+    gtk_paned_set_start_child((GtkPaned *)paned, drawer);
+    gtk_paned_set_end_child((GtkPaned *)paned, winstack);
     gtk_box_append((GtkBox *)winbox, create_navbar());
     gtk_box_append((GtkBox *)winbox, paned);
     gtk_window_set_child((GtkWindow *)window, winbox);

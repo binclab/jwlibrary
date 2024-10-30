@@ -1,6 +1,7 @@
 #include "winstack.h"
 
-GtkWidget *create_winstack(){
+GtkWidget *create_winstack()
+{
     winstack = gtk_stack_new();
     init_home();
     init_bible();
@@ -40,11 +41,12 @@ static void init_meetings()
 
 static void init_wol()
 {
-    gchar *uri = (char *)malloc(66);
-    time_t rawtime = time(NULL);
-    struct tm *date = localtime(&rawtime);
-    int week = (date->tm_yday - date->tm_wday + 7) / 7;
-    sprintf(uri, "https://wol.jw.org/en/wol/meetings/r1/lp-e/%i/%i", date->tm_year + 1900, week);
+    GDateTime *date = g_date_time_new_now_local();
+    // gchar *week = g_date_time_format(date, "%V");
+    gint week = g_date_time_get_week_of_year(date);
+    gint year = g_date_time_get_year(date);
+    gchar *uri = malloc(sizeof(char) * 50);
+    sprintf(uri, "https://wol.jw.org/en/wol/meetings/r1/lp-e/%i/%i", year, week);
     char *storage = (char *)malloc(strlen(home) + 10);
     printf("Time : %s\n", uri);
     GtkWidget *webview = webkit_web_view_new();
