@@ -61,3 +61,5 @@ dkms.conf
 # generated directories
 bin/
 obj/
+
+.build/
