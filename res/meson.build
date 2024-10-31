@@ -1,7 +1,7 @@
 resources = custom_target(
     'resources.c',
     output : 'resources.c',
-    input: ['gresources.xml', 'script.js'],
+    input: ['gresources.xml', 'icons/jwlibrary.png'],
   command : [
     find_program('glib-compile-resources'), 
     '--target=@OUTPUT@', 

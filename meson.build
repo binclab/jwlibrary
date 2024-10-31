@@ -8,6 +8,6 @@ libzipdep = dependency('libzip')
 subdir('res')
 subdir('gui')
 subdir('reader')
-executable('jwlibrary', 'main.c', gui_sources, reader_sources, 
+executable('jwlibrary', 'main.c', gui_sources, reader_sources, resources,
     dependencies : [webkitdep, gstreamerdep, gstvideodep, sqlitedep, libzipdep]
 )

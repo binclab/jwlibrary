@@ -21,17 +21,11 @@ void init_window(GtkApplication *application, gchar *home)
     GtkWidget *winbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     GtkWidget *winstack = create_winstack();
     GtkWidget *drawer = create_drawer((GtkStack *)winstack);
-    GtkIconTheme *icon_theme = gtk_icon_theme_get_for_display(display);
-    gtk_icon_theme_add_resource_path(icon_theme, "/com/binclab/jwlibrary");
-
-    if (gtk_icon_theme_has_icon(icon_theme, "my-icon") != 1)
-    {
-        printf("No Icon Found\n");
-    }
-
-    gtk_window_set_default_icon_name("ic_jwlibrary");
+    GtkIconTheme *theme = gtk_icon_theme_get_for_display(display);
+    gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/resources/icons/");
+    gtk_window_set_default_icon_name("jwlibrary");
     gtk_window_set_title((GtkWindow*)window, "JW Library");
-    gtk_window_set_icon_name((GtkWindow*)window, "ic_jwlibrary");
+    gtk_window_set_icon_name((GtkWindow*)window, "jwlibrary");
     gtk_window_set_default_size((GtkWindow *)window, 854, 480);
     gtk_widget_set_size_request(window, 854, 480);
     gtk_widget_set_hexpand(paned, TRUE);
