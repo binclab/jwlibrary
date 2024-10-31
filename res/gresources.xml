@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/com/binclab/jwlibrary/resources/icons/48x48/apps">
-    <file>48x48/jwlibrary.png</file>
+  <gresource prefix="/com/binclab/jwlibrary/icons/48x48/apps">
+    <file>icons/48x48/apps/jwlibrary.png</file>
   </gresource>
-    <gresource prefix="/com/binclab/jwlibrary/resources/icons/256x256/apps">
-    <file>256x256/jwlibrary.png</file>
+    <gresource prefix="/com/binclab/jwlibrary/icons/256x256/apps">
+    <file>icons/256x256/apps/jwlibrary.png</file>
   </gresource>
 </gresources>

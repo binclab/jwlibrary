@@ -2,12 +2,12 @@
 
 int main(int argc, char *argv[])
 {
-    int status;
+    argv[0] = "jwlibrary";
     home = (gchar *)malloc(strlen(g_get_home_dir()) + 24);
-    sprintf(home, "%s/.local/share/jwlibrary/", g_get_home_dir());
+    sprintf(home, "%s/.local/share/%s/", g_get_home_dir(), argv[0]);
     GtkApplication *application = gtk_application_new("org.jw.library", 0);
     g_signal_connect(application, "activate", (GCallback)init_window, home);
-    status = g_application_run((GApplication *)application, argc, argv);
+    int status = g_application_run((GApplication *)application, argc, argv);
     g_object_unref(application);
     return status;
 }
@@ -16,31 +16,63 @@ void init_window(GtkApplication *application, gchar *home)
 {
     get_managers();
     get_devices();
+    
     GtkWidget *window = gtk_application_window_new(application);
+    GtkWidget *container = gtk_fixed_new();
+    GtkWidget *paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+    GtkWidget *stack = gtk_stack_new();
+
+    GtkWidget *sidebar = gtk_stack_sidebar_new();
+    GtkWidget *label = gtk_label_new_with_mnemonic("Home");
+
+    gtk_stack_sidebar_set_stack((GtkStackSidebar*)sidebar, (GtkStack*)stack);
+    gtk_stack_add_child((GtkStack*)stack, gtk_button_new_with_label("Child 1"));
+    gtk_stack_add_child((GtkStack*)stack, gtk_button_new_with_label("Child 2"));
+
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_size_request(paned, 48, -1);
+    gtk_widget_set_size_request(label, 48, -1);
+    gtk_widget_set_size_request(box, 1, -1);
+    gtk_paned_set_wide_handle((GtkPaned *)paned, TRUE);
+    gtk_paned_set_position((GtkPaned *)paned, 0);
+    gtk_paned_set_shrink_start_child((GtkPaned *)paned, TRUE);
+    gtk_paned_set_resize_start_child((GtkPaned *)paned, TRUE);
+    gtk_paned_set_shrink_end_child((GtkPaned *)paned, TRUE);
+    gtk_paned_set_resize_end_child((GtkPaned *)paned, FALSE);
+
+    //gtk_widget_set_vexpand(container, TRUE);
+    //gtk_widget_set_hexpand(container, TRUE);
+
+    //gtk_widget_set_size_request(label, 100, -1);
+    //gtk_widget_set_size_request(button, 100, -1);
+    
+    //gtk_fixed_put((GtkFixed*)container, stack, 48, 48);
+    gtk_fixed_put((GtkFixed*)container, stack, 48, 0);
+    gtk_fixed_put((GtkFixed*)container, sidebar, 0, 0);
+    gtk_fixed_put((GtkFixed*)container, paned, 48, 0);
+
+    //gtk_widget_set_hexpand(paned, TRUE);
+    gtk_paned_set_start_child((GtkPaned *)paned, label);
+    gtk_paned_set_end_child((GtkPaned *)paned, box);
+
+    gtk_window_set_default_icon_name("jwlibrary");
+    gtk_window_set_icon_name((GtkWindow*)window, "jwlibrary");
+    gtk_window_set_title((GtkWindow*)window, "JW Library");
+    gtk_window_set_default_size((GtkWindow *)window, 854, 480);
+    gtk_widget_set_size_request(window, 854, 480);
+    gtk_window_set_child((GtkWindow *)window, container);
+    
+    /*
     GtkWidget *paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
     GtkWidget *winbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     GtkWidget *winstack = create_winstack();
     GtkWidget *drawer = create_drawer((GtkStack *)winstack);
     GtkIconTheme *theme = gtk_icon_theme_get_for_display(display);
-    gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/resources/icons/");
-    gtk_window_set_default_icon_name("jwlibrary");
-    gtk_window_set_title((GtkWindow*)window, "JW Library");
-    gtk_window_set_icon_name((GtkWindow*)window, "jwlibrary");
-    gtk_window_set_default_size((GtkWindow *)window, 854, 480);
-    gtk_widget_set_size_request(window, 854, 480);
-    gtk_widget_set_hexpand(paned, TRUE);
-    gtk_paned_set_wide_handle((GtkPaned *)paned, TRUE);
-    gtk_paned_set_position((GtkPaned *)paned, 0);
-    gtk_paned_set_shrink_start_child((GtkPaned *)paned, TRUE);
-    gtk_paned_set_resize_start_child((GtkPaned *)paned, FALSE);
-    gtk_paned_set_shrink_end_child((GtkPaned *)paned, FALSE);
-    gtk_paned_set_resize_end_child((GtkPaned *)paned, TRUE);
-    gtk_paned_set_start_child((GtkPaned *)paned, drawer);
-    gtk_paned_set_end_child((GtkPaned *)paned, winstack);
+    //gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/icons/");
     gtk_box_append((GtkBox *)winbox, create_navbar());
     gtk_box_append((GtkBox *)winbox, paned);
     gtk_window_set_child((GtkWindow *)window, winbox);
-    construct_media_window();
+    construct_media_window();*/
     gtk_window_present((GtkWindow *)window);
 }
 
