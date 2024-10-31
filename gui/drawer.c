@@ -10,9 +10,5 @@ GtkWidget *create_drawer(GtkStack *winstack)
     populate_drawer();
     g_signal_connect(navbtn, "clicked", (GCallback)show_drawer, NULL);*/
 
-    GtkGesture *dragger = gtk_gesture_drag_new();
-    g_signal_connect(dragger, "drag-end", (GCallback)move_handle, gtk_widget_get_parent(drawer));
-    gtk_widget_add_controller(drawer, (GtkEventController *)dragger);
-
     return drawer;
 }
