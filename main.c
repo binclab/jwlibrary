@@ -16,21 +16,29 @@ void init_window(GtkApplication *application, gchar *home)
 {
     get_managers();
     get_devices();
-    
+
     GtkWidget *window = gtk_application_window_new(application);
-    GtkWidget *container = gtk_fixed_new();
+    GtkWidget *container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     GtkWidget *paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
     GtkWidget *stack = gtk_stack_new();
 
+    GtkWidget *switcher = gtk_stack_switcher_new();
     GtkWidget *sidebar = gtk_stack_sidebar_new();
     GtkWidget *label = gtk_label_new_with_mnemonic("Home");
 
-    gtk_stack_sidebar_set_stack((GtkStackSidebar*)sidebar, (GtkStack*)stack);
-    gtk_stack_add_child((GtkStack*)stack, gtk_button_new_with_label("Child 1"));
-    gtk_stack_add_child((GtkStack*)stack, gtk_button_new_with_label("Child 2"));
+    gtk_stack_sidebar_set_stack((GtkStackSidebar *)sidebar, (GtkStack *)stack);
+    gtk_stack_switcher_set_stack((GtkStackSwitcher *)switcher, (GtkStack *)stack);
+    gtk_orientable_set_orientation((GtkOrientable *)switcher, GTK_ORIENTATION_VERTICAL);
+    GtkStackPage *page1 = gtk_stack_add_titled((GtkStack *)stack, gtk_button_new_with_label("Child 1"), "Child 1", "Child 1");
+    GtkStackPage *page2 = gtk_stack_add_titled((GtkStack *)stack, gtk_button_new_with_label("Child 2"), "Child 2", "Child 2");
+    GtkStackPage *page3 = gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Bible", "Bible");
+
+    gtk_stack_page_set_icon_name((GtkStackPage *)page1, "audio-volume-high");
+    gtk_stack_page_set_icon_name((GtkStackPage *)page2, "audio-volume-high");
+    gtk_stack_page_set_icon_name((GtkStackPage *)page3, "audio-volume-high");
 
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_widget_set_size_request(paned, 48, -1);
+    gtk_widget_set_size_request(paned, 128, -1);
     gtk_widget_set_size_request(label, 48, -1);
     gtk_widget_set_size_request(box, 1, -1);
     gtk_paned_set_wide_handle((GtkPaned *)paned, TRUE);
@@ -40,28 +48,32 @@ void init_window(GtkApplication *application, gchar *home)
     gtk_paned_set_shrink_end_child((GtkPaned *)paned, TRUE);
     gtk_paned_set_resize_end_child((GtkPaned *)paned, FALSE);
 
-    //gtk_widget_set_vexpand(container, TRUE);
-    //gtk_widget_set_hexpand(container, TRUE);
+    // gtk_widget_set_vexpand(container, TRUE);
+    // gtk_widget_set_hexpand(container, TRUE);
 
-    //gtk_widget_set_size_request(label, 100, -1);
-    //gtk_widget_set_size_request(button, 100, -1);
-    
-    //gtk_fixed_put((GtkFixed*)container, stack, 48, 48);
-    gtk_fixed_put((GtkFixed*)container, stack, 48, 0);
-    gtk_fixed_put((GtkFixed*)container, sidebar, 0, 0);
-    gtk_fixed_put((GtkFixed*)container, paned, 48, 0);
+    // gtk_widget_set_size_request(label, 100, -1);
+    // gtk_widget_set_size_request(button, 100, -1);
 
-    //gtk_widget_set_hexpand(paned, TRUE);
-    gtk_paned_set_start_child((GtkPaned *)paned, label);
+    // gtk_fixed_put((GtkFixed*)container, stack, 48, 48);
+
+    gtk_widget_set_margin_top(switcher, 8);
+
+    double position = 32;
+    gtk_fixed_put((GtkFixed *)container, stack, position, 0);
+    gtk_fixed_put((GtkFixed *)container, switcher, 0, 0);
+    gtk_fixed_put((GtkFixed *)container, paned, position, 0);
+
+    gtk_widget_set_vexpand(paned, TRUE);
+    gtk_paned_set_start_child((GtkPaned *)paned, sidebar);
     gtk_paned_set_end_child((GtkPaned *)paned, box);
 
     gtk_window_set_default_icon_name("jwlibrary");
-    gtk_window_set_icon_name((GtkWindow*)window, "jwlibrary");
-    gtk_window_set_title((GtkWindow*)window, "JW Library");
+    gtk_window_set_icon_name((GtkWindow *)window, "jwlibrary");
+    gtk_window_set_title((GtkWindow *)window, "JW Library");
     gtk_window_set_default_size((GtkWindow *)window, 854, 480);
     gtk_widget_set_size_request(window, 854, 480);
     gtk_window_set_child((GtkWindow *)window, container);
-    
+
     /*
     GtkWidget *paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
     GtkWidget *winbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
