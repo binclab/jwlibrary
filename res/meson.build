@@ -1,7 +1,7 @@
 resources = custom_target(
     'resources.c',
     output : 'resources.c',
-    input: ['gresources.xml'],
+    input: ['gresources.xml', 'css/styles.css'],
   command : [
     find_program('glib-compile-resources'), 
     '--target=@OUTPUT@', 
