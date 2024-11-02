@@ -18,6 +18,7 @@ static void get_managers(), get_devices(), construct_main_window(), construct_me
 static void monitor_added(), monitor_removed();
 static GdkMonitor *get_monitor(int position);
 extern GtkWidget *create_navbar(), *create_drawer(), *create_winstack();
+extern GResource *gresources_get_resource(void);
 
 GtkWidget *window, *mediawindow;
 
