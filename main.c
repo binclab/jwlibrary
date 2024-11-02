@@ -15,31 +15,30 @@ int main(int argc, char *argv[])
 void init_window(GtkApplication *application, gchar *home)
 {
     get_managers();
-    get_devices();
     GtkWidget *window = gtk_application_window_new(application);
     GtkWidget *container = gtk_grid_new();
     GtkWidget *switcher = gtk_stack_switcher_new();
     GtkWidget *header = gtk_button_new_with_label("title");
-    GtkWidget *overlay = gtk_overlay_new();
+    GtkWidget *fixed = gtk_fixed_new();
     GtkWidget *stack = gtk_stack_new();
     GtkWidget *paned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
-    GtkStackPage *page = gtk_stack_add_titled((GtkStack *)stack, gtk_button_new_with_label("Child 1"), "Child 1", "Child 1");
+    GtkStackPage *page = gtk_stack_add_titled((GtkStack *)stack, gtk_toggle_button_new(), "Child 1", "Child 1");
 
     gtk_widget_set_size_request(container, -1, -1);
-    gtk_overlay_set_child((GtkOverlay *)overlay, stack);
-    gtk_overlay_add_overlay((GtkOverlay *)overlay, paned);
+    gtk_fixed_put((GtkFixed *)fixed, stack, 0, 0);
+    gtk_fixed_put((GtkFixed *)fixed, paned, 0, 0);
     gtk_orientable_set_orientation((GtkOrientable *)switcher, GTK_ORIENTATION_VERTICAL);
     gtk_stack_page_set_icon_name((GtkStackPage *)page, "audio-volume-high");
     gtk_stack_switcher_set_stack((GtkStackSwitcher *)switcher, (GtkStack *)stack);
 
-    gtk_grid_set_column_homogeneous((GtkGrid *)container, FALSE);
-    gtk_grid_set_row_homogeneous((GtkGrid *)container, FALSE);
+    // gtk_grid_set_column_homogeneous((GtkGrid *)container, FALSE);
+    // gtk_grid_set_row_homogeneous((GtkGrid *)container, FALSE);
     gtk_widget_set_hexpand(header, TRUE);
-    gtk_widget_set_vexpand(overlay, TRUE);
-    gtk_widget_set_hexpand(switcher, FALSE);
+    // gtk_widget_set_vexpand(fixed, TRUE);
+    gtk_widget_set_valign(switcher, GTK_ALIGN_START);
     gtk_grid_attach((GtkGrid *)container, switcher, 0, 0, 1, 2);
     gtk_grid_attach((GtkGrid *)container, header, 1, 0, 1, 1);
-    gtk_grid_attach((GtkGrid *)container, overlay, 1, 1, 1, 1);
+    gtk_grid_attach((GtkGrid *)container, fixed, 1, 1, 1, 1);
     gtk_widget_set_size_request(window, 854, 480);
     gtk_window_set_child((GtkWindow *)window, container);
     gtk_window_present((GtkWindow *)window);
@@ -47,12 +46,12 @@ void init_window(GtkApplication *application, gchar *home)
 
 static void get_managers()
 {
-}
-
-static void get_devices()
-{
     display = gdk_display_get_default();
+    provider = gtk_css_provider_new();
+
     projector = get_monitor(1);
+    gtk_css_provider_load_from_resource(provider, "/com/binclab/jwlibrary/css/styles.css");
+    gtk_style_context_add_provider_for_display(display, (GtkStyleProvider *)provider, 600);
 }
 
 static GdkMonitor *get_monitor(int position)

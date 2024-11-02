@@ -6,4 +6,7 @@
     <gresource prefix="/com/binclab/jwlibrary/icons/256x256/apps">
     <file>icons/256x256/apps/jwlibrary.png</file>
   </gresource>
+  <gresource prefix="/com/binclab/jwlibrary/css">
+  <file>css/styles.css</file>
+</gresource>
 </gresources>

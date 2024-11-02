@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "winstack.h": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "window.h": "c"
     },
     "cmake.configureOnOpen": false
 }

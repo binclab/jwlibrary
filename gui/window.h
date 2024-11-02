@@ -8,6 +8,9 @@ GdkDisplay *display;
 GdkMonitor *projector;
 GdkSurface *surface;
 
+GtkCssProvider *provider;
+GtkStyleContext *context;
+
 gchar *home;
 
 static void init_window(GtkApplication *application, gchar *home);
