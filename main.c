@@ -19,44 +19,43 @@ static void show_sidebar(GtkToggleButton *button, GtkWidget *revealer) {
 
 void init_window(GtkApplication *application, gchar *home) {
   get_managers();
+  for(char *list: gtk_icon_theme_get_search_path(gtk_icon_theme_get_for_display(display)))
+  
   GtkWidget *window = gtk_application_window_new(application);
   GtkWidget *container = gtk_grid_new();
   GtkWidget *hamburger = gtk_toggle_button_new();
-  GtkWidget *switcher = gtk_stack_switcher_new();
-  GtkWidget *header = gtk_toggle_button_new_with_label("title");
   GtkWidget *overlay = gtk_overlay_new();
   GtkWidget *stack = gtk_stack_new();
   GtkWidget *revealer = gtk_revealer_new();
   GtkWidget *toggle = gtk_toggle_button_new();
   GtkStackPage *page =
       gtk_stack_add_titled((GtkStack *)stack, toggle, "Child 1", "Child 1");
+  GtkStackPage *page1 =
+      gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Child 1", "Child 1");
+  GtkStackPage *page2 =
+      gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Child 1", "Child 1");
+  GtkStackPage *page3 =
+      gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Child 1", "Child 1");
   // gtk_widget_set_size_request(container, -1, -1);
+  init_navigation((GtkGrid*)container, (GtkStack *)stack);
   gtk_widget_set_size_request(revealer, 100, -1);
   // gtk_widget_set_size_request(pane2, 0, -1);
   gtk_revealer_set_transition_type((GtkRevealer *)revealer,
                                    GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT);
-  gtk_orientable_set_orientation((GtkOrientable *)switcher,
-                                 GTK_ORIENTATION_VERTICAL);
-  gtk_stack_page_set_icon_name((GtkStackPage *)page, "audio-volume-high");
-  gtk_stack_switcher_set_stack((GtkStackSwitcher *)switcher, (GtkStack *)stack);
-  g_signal_connect(header, "toggled", (GCallback)show_sidebar, revealer);
-  gtk_widget_set_hexpand(header, TRUE);
+  gtk_stack_page_set_icon_name((GtkStackPage *)page, "go-home");
+  gtk_stack_page_set_icon_name((GtkStackPage *)page1, "accessories-dictionary-symbolic");
+  gtk_stack_page_set_icon_name((GtkStackPage *)page2, "accessories-dictionary-symbolic");
+  gtk_stack_page_set_icon_name((GtkStackPage *)page3, "accessories-dictionary-symbolic");
+  g_signal_connect(hamburger, "toggled", (GCallback)show_sidebar, revealer);
   gtk_widget_set_vexpand(overlay, TRUE);
-  gtk_widget_set_valign(switcher, GTK_ALIGN_START);
   gtk_widget_set_halign(revealer, GTK_ALIGN_START);
   gtk_widget_set_visible(revealer, FALSE);
   gtk_revealer_set_child((GtkRevealer *)revealer,
                          gtk_button_new_with_label("Reveal"));
   gtk_overlay_set_child((GtkOverlay *)overlay, stack);
   gtk_overlay_add_overlay((GtkOverlay *)overlay, revealer);
-  gtk_button_set_child(
-      (GtkButton *)hamburger,
-      gtk_image_new_from_resource(
-          "/com/binclab/jwlibrary/icons/scalable/navigation/hamburger.svg"));
-  // gtk_button_set_icon_name((GtkButton *)hamburger, "nav-hamburger");
+  gtk_button_set_icon_name((GtkButton *)hamburger, "open-menu");
   gtk_grid_attach((GtkGrid *)container, hamburger, 0, 0, 1, 1);
-  gtk_grid_attach((GtkGrid *)container, switcher, 0, 1, 1, 1);
-  gtk_grid_attach((GtkGrid *)container, header, 1, 0, 1, 1);
   gtk_grid_attach((GtkGrid *)container, overlay, 1, 1, 1, 1);
   gtk_widget_set_size_request(window, 854, 480);
   gtk_window_set_child((GtkWindow *)window, container);
@@ -67,8 +66,8 @@ static void get_managers() {
   display = gdk_display_get_default();
   provider = gtk_css_provider_new();
   projector = get_monitor(1);
-  GtkIconTheme *theme = gtk_icon_theme_get_for_display(display);
-  gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/icons");
+  /*GtkIconTheme *theme = gtk_icon_theme_get_for_display(display);
+  gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/icons");*/
   gtk_css_provider_load_from_resource(provider,
                                       "/com/binclab/jwlibrary/css/style.css");
   gtk_style_context_add_provider_for_display(display,
