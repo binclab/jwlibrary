@@ -19,7 +19,7 @@ static void show_sidebar(GtkToggleButton *button, GtkWidget *revealer) {
 
 void init_window(GtkApplication *application, gchar *home) {
   get_managers();
-  for(char *list: gtk_icon_theme_get_search_path(gtk_icon_theme_get_for_display(display)))
+  //for(char *list: gtk_icon_theme_get_search_path(gtk_icon_theme_get_for_display(display)))
   
   GtkWidget *window = gtk_application_window_new(application);
   GtkWidget *container = gtk_grid_new();
