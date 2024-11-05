@@ -1,12 +1,16 @@
 #include "navigation.h"
 
 void *init_navigation(GtkGrid *grid, GtkStack *stack) {
-  GtkWidget *header = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  GtkWidget *historybtn = gtk_button_new_from_icon_name("document-open-recent-symbolic");
-  GtkWidget *syncbtn = gtk_button_new_from_icon_name("emblem-synchronizing-symbolic");
-  GtkWidget *settingsbtn = gtk_button_new_from_icon_name("emblem-system-symbolic");
+  GtkWidget *header = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+  GtkWidget *historybtn =
+      gtk_button_new_from_icon_name("document-open-recent-symbolic");
+  GtkWidget *syncbtn =
+      gtk_button_new_from_icon_name("emblem-synchronizing-symbolic");
+  GtkWidget *settingsbtn =
+      gtk_button_new_from_icon_name("emblem-system-symbolic");
   GtkWidget *morebtn = gtk_button_new_from_icon_name("view-more-symbolic");
   GtkWidget *navinfo = gtk_label_new("Home");
+  GtkWidget *space = gtk_label_new(NULL);
   switcher = gtk_stack_switcher_new();
 
   /*navbar = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -23,12 +27,15 @@ void *init_navigation(GtkGrid *grid, GtkStack *stack) {
   gtk_widget_set_halign(syncbtn, GTK_ALIGN_END);
   gtk_widget_set_halign(settingsbtn, GTK_ALIGN_END);
   gtk_widget_set_halign(morebtn, GTK_ALIGN_END);
-  gtk_box_append((GtkBox*)header, navinfo);
-  gtk_box_append((GtkBox*)header, historybtn);
-  gtk_box_append((GtkBox*)header, syncbtn);
-  gtk_box_append((GtkBox*)header, settingsbtn);
-  gtk_box_append((GtkBox*)header, morebtn);
-  gtk_widget_set_vexpand(header, TRUE);
+  gtk_widget_set_margin_start(navinfo, 8);
+  gtk_box_append((GtkBox *)header, navinfo);
+  gtk_box_append((GtkBox *)header, space);
+  gtk_box_append((GtkBox *)header, historybtn);
+  gtk_box_append((GtkBox *)header, syncbtn);
+  gtk_box_append((GtkBox *)header, settingsbtn);
+  gtk_box_append((GtkBox *)header, morebtn);
+  gtk_widget_set_hexpand(header, TRUE);
+  gtk_widget_set_hexpand(space, TRUE);
   gtk_widget_set_valign(switcher, GTK_ALIGN_START);
   gtk_grid_attach(grid, switcher, 0, 1, 1, 1);
   gtk_grid_attach(grid, header, 1, 0, 1, 1);

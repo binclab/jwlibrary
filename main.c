@@ -11,67 +11,34 @@ int main(int argc, char *argv[]) {
   return status;
 }
 
-static void show_sidebar(GtkToggleButton *button, GtkWidget *revealer) {
-  gboolean toggled = gtk_toggle_button_get_active(button);
-  gtk_widget_set_visible(revealer, toggled);
-  gtk_revealer_set_reveal_child((GtkRevealer *)revealer, toggled);
-}
-
 void init_window(GtkApplication *application, gchar *home) {
   get_managers();
-  //for(char *list: gtk_icon_theme_get_search_path(gtk_icon_theme_get_for_display(display)))
-  
+  // for(char *list:
+  // gtk_icon_theme_get_search_path(gtk_icon_theme_get_for_display(display)))
+
   GtkWidget *window = gtk_application_window_new(application);
   GtkWidget *container = gtk_grid_new();
-  GtkWidget *hamburger = gtk_toggle_button_new();
-  GtkWidget *overlay = gtk_overlay_new();
-  GtkWidget *stack = gtk_stack_new();
-  GtkWidget *revealer = gtk_revealer_new();
-  GtkWidget *toggle = gtk_toggle_button_new();
-  GtkStackPage *page =
-      gtk_stack_add_titled((GtkStack *)stack, toggle, "Child 1", "Child 1");
-  GtkStackPage *page1 =
-      gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Child 1", "Child 1");
-  GtkStackPage *page2 =
-      gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Child 1", "Child 1");
-  GtkStackPage *page3 =
-      gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Child 1", "Child 1");
-  // gtk_widget_set_size_request(container, -1, -1);
-  init_navigation((GtkGrid*)container, (GtkStack *)stack);
-  gtk_widget_set_size_request(revealer, 100, -1);
-  // gtk_widget_set_size_request(pane2, 0, -1);
-  gtk_revealer_set_transition_type((GtkRevealer *)revealer,
-                                   GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT);
-  gtk_stack_page_set_icon_name((GtkStackPage *)page, "go-home");
-  gtk_stack_page_set_icon_name((GtkStackPage *)page1, "accessories-dictionary-symbolic");
-  gtk_stack_page_set_icon_name((GtkStackPage *)page2, "accessories-dictionary-symbolic");
-  gtk_stack_page_set_icon_name((GtkStackPage *)page3, "accessories-dictionary-symbolic");
-  g_signal_connect(hamburger, "toggled", (GCallback)show_sidebar, revealer);
-  gtk_widget_set_vexpand(overlay, TRUE);
-  gtk_widget_set_halign(revealer, GTK_ALIGN_START);
-  gtk_widget_set_visible(revealer, FALSE);
-  gtk_revealer_set_child((GtkRevealer *)revealer,
-                         gtk_button_new_with_label("Reveal"));
-  gtk_overlay_set_child((GtkOverlay *)overlay, stack);
-  gtk_overlay_add_overlay((GtkOverlay *)overlay, revealer);
-  gtk_button_set_icon_name((GtkButton *)hamburger, "open-menu");
-  gtk_grid_attach((GtkGrid *)container, hamburger, 0, 0, 1, 1);
-  gtk_grid_attach((GtkGrid *)container, overlay, 1, 1, 1, 1);
+  init_winstack((GtkGrid*)container);
   gtk_widget_set_size_request(window, 854, 480);
   gtk_window_set_child((GtkWindow *)window, container);
   gtk_window_present((GtkWindow *)window);
 }
 
 static void get_managers() {
+  const char *styles = "/com/binclab/jwlibrary/css/style.css";
   display = gdk_display_get_default();
-  provider = gtk_css_provider_new();
+  provider = (GtkStyleProvider *)gtk_css_provider_new();
+  theme = gtk_icon_theme_get_for_display(display);
   projector = get_monitor(1);
-  /*GtkIconTheme *theme = gtk_icon_theme_get_for_display(display);
-  gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/icons");*/
-  gtk_css_provider_load_from_resource(provider,
-                                      "/com/binclab/jwlibrary/css/style.css");
-  gtk_style_context_add_provider_for_display(display,
-                                             (GtkStyleProvider *)provider, 600);
+  gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/icons");
+  gtk_css_provider_load_from_resource((GtkCssProvider *)provider, styles);
+  gtk_style_context_add_provider_for_display(display, provider, 600);
+
+  if (gtk_icon_theme_has_icon(theme, "nav-hamburger")) {
+    g_print("Icon exists\n");
+  } else {
+    g_print("Icon does not exist\n");
+  }
 }
 
 static GdkMonitor *get_monitor(int position) {
