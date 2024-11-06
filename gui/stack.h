@@ -3,11 +3,8 @@
 
 #include <webkit/webkit.h>
 
-static GtkWidget *stack;
 static GtkStackPage *page[8];
-
-GtkWidget *create_winstack();
-static void init_home(), init_bible(), init_publications(), init_media();
+static void init_home(GtkStack *stack), init_bible(GtkStack *stack), init_publications(GtkStack *stack), init_media(GtkStack *stack);
 static void init_meetings(), init_wol(), init_player(), init_settings();
 static void show_sidebar(GtkToggleButton *button, GtkWidget *revealer);
 extern gchar *home;

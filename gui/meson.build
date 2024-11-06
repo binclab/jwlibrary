@@ -1,1 +1,1 @@
-gui_sources = files(['navigation.c', 'drawer.c', 'winstack.c'])
+gui_sources = files(['navigation.c', 'drawer.c', 'stack.c'])
