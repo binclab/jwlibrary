@@ -2,10 +2,11 @@
 <gresources>
   <gresource prefix="/com/binclab/jwlibrary">
     <file>icons/48x48/apps/jwlibrary.png</file>
+    <file>icons/96x96/nav-home.png</file>
+    <file>icons/96x96/nav-bible.png</file>
     <file>icons/96x96/nav-hamburger.png</file>
     <file>icons/96x96/nav-meetings.png</file>
     <file>icons/96x96/nav-library.png</file>
-    <file>icons/96x96/nav-bible.png</file>
     <file>icons/256x256/apps/jwlibrary.png</file>
     <file>icons/scalable/icon.svg</file>
     <file>css/style.css</file>
