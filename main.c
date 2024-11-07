@@ -30,15 +30,9 @@ static void get_managers() {
   provider = (GtkStyleProvider *)gtk_css_provider_new();
   theme = gtk_icon_theme_get_for_display(display);
   projector = get_monitor(1);
-  gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/icons");
+  gtk_icon_theme_add_resource_path(theme, "/com/binclab/jwlibrary/icons/96x96");
   gtk_css_provider_load_from_resource((GtkCssProvider *)provider, styles);
   gtk_style_context_add_provider_for_display(display, provider, 600);
-
-  if (gtk_icon_theme_has_icon(theme, "nav-hamburger")) {
-    g_print("Icon exists\n");
-  } else {
-    g_print("Icon does not exist\n");
-  }
 }
 
 static GdkMonitor *get_monitor(int position) {
