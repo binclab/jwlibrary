@@ -50,14 +50,14 @@ static void init_home(GtkStack *stack) {
 }
 
 static void init_bible(GtkStack *stack) {
-  GListStore *store = g_list_store_new(G_TYPE_STRING);
-  for (guint i = 0; i < 100; i++) {
-    char *item = g_strdup_printf("Item %u", i);
-    g_list_store_append(store, item);
-    g_free(item);
-  }
-  GtkSingleSelection *model = gtk_single_selection_new((GListModel*)store);
-  GtkWidget *books = gtk_grid_view_new((GtkSelecionModel*)model, GtkListItemFactory);
+  GListStore *list_store = g_list_store_new(G_TYPE_STRING);
+  /*GListStore *store = g_list_store_new(G_TYPE_STRING);
+  g_list_store_append(store, g_strdup("Item 1"));
+  g_list_store_append(store, g_strdup("Item 2"));
+  g_list_store_append(store, g_strdup("Item 3"));
+  GtkListItemFactory *factory = gtk_signal_list_item_factory_new();
+  GtkSingleSelection *model = gtk_single_selection_new((GListModel *)store);
+  GtkWidget *books = gtk_grid_view_new((GtkSelectionModel *)model, factory);*/
   page[1] = gtk_stack_add_titled(stack, gtk_button_new(), "Bible", "Bible");
   gtk_stack_page_set_icon_name(page[1], "accessories-dictionary-symbolic");
 }
