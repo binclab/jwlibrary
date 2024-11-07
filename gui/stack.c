@@ -7,18 +7,11 @@ void *init_winstack(GtkGrid *container) {
   GtkWidget *overlay = gtk_overlay_new();
   GtkWidget *toggle = gtk_toggle_button_new();
   init_home((GtkStack *)stack);
-  GtkStackPage *page1 = gtk_stack_add_titled(
-      (GtkStack *)stack, gtk_button_new(), "Bible", "Bible");
-  GtkStackPage *page2 = gtk_stack_add_titled(
-      (GtkStack *)stack, gtk_button_new(), "Child 1", "Child 1");
-  GtkStackPage *page3 = gtk_stack_add_titled(
-      (GtkStack *)stack, gtk_button_new(), "Child 1", "Child 1");
+  init_bible((GtkStack *)stack);
+  init_library((GtkStack *)stack);
+  init_meetings((GtkStack *)stack);
   // gtk_widget_set_size_request(container, -1, -1);
   init_navigation(container, (GtkStack *)stack);
-  gtk_stack_page_set_icon_name((GtkStackPage *)page1,
-                               "accessories-dictionary-symbolic");
-  gtk_stack_page_set_icon_name((GtkStackPage *)page2, "document-open-symbolic");
-  gtk_stack_page_set_icon_name((GtkStackPage *)page3, "user-trash-symbolic");
 
   gtk_overlay_set_child((GtkOverlay *)overlay, stack);
   GtkWidget *hamburger = gtk_toggle_button_new();
@@ -48,28 +41,36 @@ static void show_sidebar(GtkToggleButton *button, GtkWidget *revealer) {
 }
 
 static void init_home(GtkStack *stack) {
-  page[0] = gtk_stack_add_titled(stack, gtk_button_new(), "Home", "Home");
-  gtk_stack_page_set_icon_name(page[0], "nav-home");
+  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  GtkWidget *content = gtk_scrolled_window_new();
+  page[0] = gtk_stack_add_titled(stack, box, "Home", "Home");
+  gtk_stack_page_set_icon_name(page[0], "go-home");
+  // gtk_box_append((GtkBox *)box, content);
+  gtk_box_append((GtkBox *)box, content);
 }
 
 static void init_bible(GtkStack *stack) {
-  page[1] = gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Bible",
-                                 "Bible");
+  GListStore *store = g_list_store_new(G_TYPE_STRING);
+  for (guint i = 0; i < 100; i++) {
+    char *item = g_strdup_printf("Item %u", i);
+    g_list_store_append(store, item);
+    g_free(item);
+  }
+  GtkSingleSelection *model = gtk_single_selection_new((GListModel*)store);
+  GtkWidget *books = gtk_grid_view_new((GtkSelecionModel*)model, GtkListItemFactory);
+  page[1] = gtk_stack_add_titled(stack, gtk_button_new(), "Bible", "Bible");
+  gtk_stack_page_set_icon_name(page[1], "accessories-dictionary-symbolic");
 }
 
-static void init_publications(GtkStack *stack) {
-  page[2] = gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(),
-                                 "Publications", "Publications");
-}
-
-static void init_media(GtkStack *stack) {
-  page[3] = gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(), "Media",
-                                 "Media");
+static void init_library(GtkStack *stack) {
+  page[2] = gtk_stack_add_titled(stack, gtk_button_new(), "Library", "Library");
+  gtk_stack_page_set_icon_name(page[2], "document-open-symbolic");
 }
 
 static void init_meetings(GtkStack *stack) {
-  page[4] = gtk_stack_add_titled((GtkStack *)stack, gtk_button_new(),
-                                 "Meetings", "Meetings");
+  page[3] =
+      gtk_stack_add_titled(stack, gtk_button_new(), "Meetings", "Meetings");
+  gtk_stack_page_set_icon_name(page[3], "avatar-default-symbolic");
 }
 
 static void init_wol(GtkStack *stack) {
