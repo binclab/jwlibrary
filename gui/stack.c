@@ -41,24 +41,57 @@ static void show_sidebar(GtkToggleButton *button, GtkWidget *revealer) {
 }
 
 static void init_home(GtkStack *stack) {
+  const char *days[] = {"Monday", "Tuesday",  "Wednesday", "Thursday",
+                        "Friday", "Saturday", "Sunday"};
+  const char *months[] = {"January",   "February", "March",    "April",
+                               "May",       "June",     "July",     "August",
+                               "September", "October",  "November", "December"};
+  GDateTime *date = g_date_time_new_now_local();
   GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  GtkWidget *dailytext = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  GtkWidget *textbutton = gtk_button_new();
+  GtkWidget *primary = gtk_image_new_from_icon_name("x-office-calendar-symbolic");
+  GtkWidget *secondary = gtk_image_new_from_icon_name("go-next-symbolic");
+  GtkWidget *label = gtk_label_new(NULL);
+  GtkWidget *buttonbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+  GtkWidget *textview = gtk_text_view_new();
   GtkWidget *content = gtk_scrolled_window_new();
+  GtkTextBuffer *buffer = gtk_text_view_get_buffer((GtkTextView *)textview);
+  gchar *day = days[g_date_time_get_day_of_week(date) - 1];
+  gchar *month = months[g_date_time_get_month(date) - 1];
+  gchar text[strlen(day)+ strlen(month)];
+  sprintf(text, "%s, %s %i", day, month, g_date_time_get_day_of_month(date));
+  gtk_label_set_text((GtkLabel*)label, text);
+  gtk_button_set_child((GtkButton *)textbutton, buttonbox);
   page[0] = gtk_stack_add_titled(stack, box, "Home", "Home");
   gtk_stack_page_set_icon_name(page[0], "go-home");
-  // gtk_box_append((GtkBox *)box, content);
+  gtk_widget_set_halign(textbutton, GTK_ALIGN_CENTER);
+  gtk_box_append((GtkBox *)buttonbox, primary);
+  gtk_box_append((GtkBox *)buttonbox, label);
+  gtk_box_append((GtkBox *)buttonbox, secondary);
+  gtk_box_append((GtkBox *)dailytext, textbutton);
+  gtk_box_append((GtkBox *)dailytext, textview);
+  gtk_box_append((GtkBox *)box, dailytext);
   gtk_box_append((GtkBox *)box, content);
+  open_file("/home/bret/Downloads/es24_E.jwpub");
 }
 
 static void init_bible(GtkStack *stack) {
-  GListStore *list_store = g_list_store_new(G_TYPE_STRING);
-  /*GListStore *store = g_list_store_new(G_TYPE_STRING);
-  g_list_store_append(store, g_strdup("Item 1"));
-  g_list_store_append(store, g_strdup("Item 2"));
-  g_list_store_append(store, g_strdup("Item 3"));
-  GtkListItemFactory *factory = gtk_signal_list_item_factory_new();
-  GtkSingleSelection *model = gtk_single_selection_new((GListModel *)store);
-  GtkWidget *books = gtk_grid_view_new((GtkSelectionModel *)model, factory);*/
-  page[1] = gtk_stack_add_titled(stack, gtk_button_new(), "Bible", "Bible");
+  GtkWidget *bible = gtk_notebook_new();
+  gtk_notebook_append_page((GtkNotebook *)bible, gtk_button_new(),
+                           gtk_label_new("INTRODUCTION"));
+  gtk_notebook_append_page((GtkNotebook *)bible, gtk_button_new(),
+                           gtk_label_new("BOOKS"));
+  gtk_notebook_append_page((GtkNotebook *)bible, gtk_button_new(),
+                           gtk_label_new("INDEX"));
+  gtk_notebook_append_page((GtkNotebook *)bible, gtk_button_new(),
+                           gtk_label_new("APPENDIX A"));
+  gtk_notebook_append_page((GtkNotebook *)bible, gtk_button_new(),
+                           gtk_label_new("APPENDIX B"));
+  gtk_notebook_append_page((GtkNotebook *)bible, gtk_button_new(),
+                           gtk_label_new("APPENDIX C"));
+  gtk_notebook_set_current_page((GtkNotebook *)bible, 1);
+  page[1] = gtk_stack_add_titled(stack, bible, "Bible", "Bible");
   gtk_stack_page_set_icon_name(page[1], "accessories-dictionary-symbolic");
 }
 
