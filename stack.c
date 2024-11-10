@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "reader/parser.h"
 
 void *init_winstack(GtkGrid *container) {
   GtkWidget *stack = gtk_stack_new();

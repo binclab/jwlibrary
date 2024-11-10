@@ -1,9 +1,9 @@
-#include "gui/window.h"
+#include "main.h"
 
 int main(int argc, char *argv[]) {
   argv[0] = "jwlibrary";
-  home = (gchar *)malloc(strlen(g_get_home_dir()) + 24);
-  sprintf(home, "%s/.local/share/%s/", g_get_home_dir(), argv[0]);
+  home = malloc(strlen(g_get_user_data_dir()) + strlen(argv[0]) + 1);
+  sprintf(home, "%s/%s/", g_get_user_data_dir(), argv[0]);
   GtkApplication *application = gtk_application_new("org.jw.library", 0);
   g_signal_connect(application, "activate", (GCallback)init_window, home);
   int status = g_application_run((GApplication *)application, argc, argv);
@@ -18,7 +18,7 @@ void init_window(GtkApplication *application, gchar *home) {
 
   GtkWidget *window = gtk_application_window_new(application);
   GtkWidget *container = gtk_grid_new();
-  init_winstack((GtkGrid*)container);
+  init_winstack((GtkGrid *)container);
   gtk_widget_set_size_request(window, 854, 480);
   gtk_window_set_child((GtkWindow *)window, container);
   gtk_window_present((GtkWindow *)window);
