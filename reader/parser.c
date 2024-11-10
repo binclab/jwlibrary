@@ -1,7 +1,5 @@
 #include "parser.h"
 
-#include <zip.h>
-
 /*1. Determine the publication card hash
 
    1. Query the SQLite `Publication` table
@@ -27,46 +25,82 @@ last 16 bytes as Initialization Vector (IV)
 
 */
 
-void open_file(gchar *path) {
+Publication open_file(char *path) {
+  Publication publication;
   zip_error_t error;
   zip_source_t *source = zip_source_file_create(path, 0, -1, &error);
-  if (source == NULL) {
-    printf("Error creating zip source: %s\n", zip_error_strerror(&error));
-  } else {
-    open_zip_source(source, "contents");
-    zip_source_t *source =
-        zip_source_buffer_create(inner_contents, stat.size, 1, &err);
-  }
-}
-
-static void open_zip_source(zip_source_t *source, const char *filename) {
-  char *contents = NULL;
-  zip_error_t error;
-  zip_t *archive = zip_open_from_source(source, ZIP_RDONLY, &error);
-  if (archive == NULL) {
-    printf("Error opening zip archive: %s\n", zip_error_strerror(&error));
-    zip_source_free(source);
-  } else {
+  zip_t *archive;
+  if (source && (archive = zip_open_from_source(source, ZIP_RDONLY, &error))) {
+    char *filename = "manifest.json";
     zip_int64_t file_index = zip_name_locate(archive, filename, ZIP_FL_NOCASE);
-    if (file_index < 0) {
-      printf("File not found in zip archive: %s\n", filename);
-      zip_close(archive);
-    } else {
-      zip_file_t *file = zip_fopen_index(archive, file_index, 0);
-      if (file == NULL) {
-        printf("Error opening file inside zip archive\n");
+    zip_file_t *file;
+    if ((file_index >= 0) && (file = zip_fopen_index(archive, file_index, 0))) {
+      struct zip_stat stat;
+      zip_stat_index(archive, file_index, 0, &stat);
+      char *buffer = malloc(stat.size);
+      if ((buffer != NULL) && (zip_fread(file, buffer, stat.size) > 0)) {
+        GError *gerror = NULL;
+        JsonParser *parser = json_parser_new();
+        json_parser_load_from_data(parser, buffer, -1, &gerror);
+        JsonNode *node = json_parser_get_root(parser);
+        JsonObject *object = json_node_get_object(node);
+        node = json_object_get_member(object, "publication");
+        object = json_node_get_object(node);
+        filename = (char *)json_object_get_string_member(object, "fileName");
+      }
+      free(buffer);
+    }
+    zip_fclose(file);
+    file_index = zip_name_locate(archive, "contents", ZIP_FL_NOCASE);
+    if ((file_index >= 0) && (file = zip_fopen_index(archive, file_index, 0))) {
+      struct zip_stat stat;
+      zip_stat_index(archive, file_index, 0, &stat);
+      char *buffer = malloc(stat.size);
+      if ((buffer != NULL) && (zip_fread(file, buffer, stat.size) > 0)) {
         zip_close(archive);
-      } else {
-        struct zip_stat stat;
-        zip_stat_index(archive, file_index, 0, &stat);
-        contents = malloc(stat.size);
-        if (contents == NULL) {
-          printf("Error allocating memory for inner zip file contents\n");
-          zip_fclose(inner_file);
-          zip_close(outer_archive);
-          return 1;
+        source = zip_source_buffer_create(buffer, stat.size, 1, &error);
+        if ((archive = zip_open_from_source(source, ZIP_RDONLY, &error))) {
+          char *result = strstr(filename, ".db");
+          if (result != NULL) *result = '\0';
+          extract_contents(filename, zip_get_num_entries(archive, 0), archive);
         }
       }
+      free(buffer);
+      zip_fclose(file);
     }
+    zip_close(archive);
+  }
+  return publication;
+}
+
+static void extract_contents(char *book, zip_int64_t entries, zip_t *archive) {
+  for (zip_int64_t i = 0; i < entries; i++) {
+    GError *error = NULL;
+    const char *filename = zip_get_name(archive, i, ZIP_FL_ENC_GUESS);
+    struct zip_stat stat;
+    zip_stat_index(archive, i, 0, &stat);
+    char *filepath = malloc(strlen(home) + 8 + strlen(book));
+    sprintf(filepath, "%slibrary/%s", home, book);
+    GFile *gfile = g_file_new_for_path(filepath);
+    if (!g_file_query_exists(gfile, NULL)) g_mkdir_with_parents(filepath, 0755);
+    filepath = realloc(filepath, strlen(filepath) + strlen(filename));
+    sprintf(filepath, "%slibrary/%s/%s", home, book, filename);
+    gfile = g_file_new_for_path(filepath);
+    zip_file_t *file = zip_fopen_index(archive, i, ZIP_FL_ENC_GUESS);
+    GFileIOStream *iostream = g_file_open_readwrite(gfile, NULL, &error);
+    char *buffer = malloc(stat.size);
+    if ((buffer != NULL) && (zip_fread(file, buffer, stat.size) > 0)) {
+      GOutputStream *stream = (GOutputStream *)iostream;
+      g_output_stream_write_all(stream, buffer, stat.size, NULL, NULL, &error);
+    }
+    free(buffer);
+    /*
+    FILE *fout = fopen(filepath, "wb");
+    zip_int64_t bytes = 0;
+    while ((bytes = zip_fread(file, buffer, sizeof(buffer))) > 0) {
+      fwrite(buffer, 1, bytes, fout);
+    }
+    fclose(fout);*/
+    zip_fclose(file);
   }
 }
