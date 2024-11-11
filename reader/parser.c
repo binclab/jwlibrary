@@ -26,7 +26,7 @@ last 16 bytes as Initialization Vector (IV)
 */
 
 Publication open_file(char *path) {
-  Publication publication;
+  Publication publication = {.database = NULL, .filename = NULL};
   zip_error_t error;
   zip_source_t *source = zip_source_file_create(path, 0, -1, &error);
   zip_t *archive;
@@ -68,7 +68,6 @@ Publication open_file(char *path) {
       free(buffer);
       zip_fclose(file);
     }
-    zip_close(archive);
   }
   return publication;
 }
@@ -79,28 +78,20 @@ static void extract_contents(char *book, zip_int64_t entries, zip_t *archive) {
     const char *filename = zip_get_name(archive, i, ZIP_FL_ENC_GUESS);
     struct zip_stat stat;
     zip_stat_index(archive, i, 0, &stat);
-    char *filepath = malloc(strlen(home) + 8 + strlen(book));
+    char filepath[strlen(home) + 8 + strlen(book) + strlen(filename)];
     sprintf(filepath, "%slibrary/%s", home, book);
     GFile *gfile = g_file_new_for_path(filepath);
     if (!g_file_query_exists(gfile, NULL)) g_mkdir_with_parents(filepath, 0755);
-    filepath = realloc(filepath, strlen(filepath) + strlen(filename));
     sprintf(filepath, "%slibrary/%s/%s", home, book, filename);
     gfile = g_file_new_for_path(filepath);
     zip_file_t *file = zip_fopen_index(archive, i, ZIP_FL_ENC_GUESS);
-    GFileIOStream *iostream = g_file_open_readwrite(gfile, NULL, &error);
+    GOutputStream *stream = (GOutputStream *)g_file_replace(
+        gfile, NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL);
     char *buffer = malloc(stat.size);
     if ((buffer != NULL) && (zip_fread(file, buffer, stat.size) > 0)) {
-      GOutputStream *stream = (GOutputStream *)iostream;
       g_output_stream_write_all(stream, buffer, stat.size, NULL, NULL, &error);
     }
     free(buffer);
-    /*
-    FILE *fout = fopen(filepath, "wb");
-    zip_int64_t bytes = 0;
-    while ((bytes = zip_fread(file, buffer, sizeof(buffer))) > 0) {
-      fwrite(buffer, 1, bytes, fout);
-    }
-    fclose(fout);*/
     zip_fclose(file);
   }
 }
