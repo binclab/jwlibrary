@@ -47,6 +47,8 @@ Publication open_file(char *path) {
         node = json_object_get_member(object, "publication");
         object = json_node_get_object(node);
         filename = (char *)json_object_get_string_member(object, "fileName");
+        char *result = strstr(filename, ".db");
+        if (result != NULL) *result = '\0';
       }
       free(buffer);
     }
@@ -60,8 +62,6 @@ Publication open_file(char *path) {
         zip_close(archive);
         source = zip_source_buffer_create(buffer, stat.size, 1, &error);
         if ((archive = zip_open_from_source(source, ZIP_RDONLY, &error))) {
-          char *result = strstr(filename, ".db");
-          if (result != NULL) *result = '\0';
           extract_contents(filename, zip_get_num_entries(archive, 0), archive);
         }
       }
@@ -72,17 +72,27 @@ Publication open_file(char *path) {
   return publication;
 }
 
-static void extract_contents(char *book, zip_int64_t entries, zip_t *archive) {
+void extract_contents(char *name, zip_int64_t entries, zip_t *archive) {
   for (zip_int64_t i = 0; i < entries; i++) {
     GError *error = NULL;
     const char *filename = zip_get_name(archive, i, ZIP_FL_ENC_GUESS);
     struct zip_stat stat;
     zip_stat_index(archive, i, 0, &stat);
-    char filepath[strlen(home) + 8 + strlen(book) + strlen(filename)];
-    sprintf(filepath, "%slibrary/%s", home, book);
-    GFile *gfile = g_file_new_for_path(filepath);
-    if (!g_file_query_exists(gfile, NULL)) g_mkdir_with_parents(filepath, 0755);
-    sprintf(filepath, "%slibrary/%s/%s", home, book, filename);
+    GFile *gfile;
+    if (name) {
+      int length = strlen(home) + 9 + strlen(name) + strlen(filename);
+      char directory[length];
+      sprintf(directory, "%slibrary/%s", home, name);
+      gfile = g_file_new_for_path(directory);
+    } else {
+      int length = strlen(home) + 8 + strlen(filename);
+      char directory[length];
+      sprintf(directory, "%slibrary", home);
+      gfile = g_file_new_for_path(directory);
+    }
+    g_file_make_directory_with_parents(gfile, NULL, NULL);
+    char filepath[strlen(g_file_get_path(gfile)) + strlen(filename)];
+    sprintf(filepath, "%s/%s", g_file_get_path(gfile), filename);
     gfile = g_file_new_for_path(filepath);
     zip_file_t *file = zip_fopen_index(archive, i, ZIP_FL_ENC_GUESS);
     GOutputStream *stream = (GOutputStream *)g_file_replace(
@@ -94,4 +104,18 @@ static void extract_contents(char *book, zip_int64_t entries, zip_t *archive) {
     free(buffer);
     zip_fclose(file);
   }
+}
+
+void get_row(sqlite3 *database, int row, int column) {
+  char *sql = malloc(43);
+  sqlite3_stmt *stmt;
+  sprintf(sql, "SELECT * FROM DatedText LIMIT 1 OFFSET %i;", row);
+  // const char *sql = "SELECT blob_column FROM DatedText WHERE id = 000;";
+  sqlite3_prepare_v2(database, sql, -1, &stmt, NULL);
+  if (sqlite3_step(stmt) == SQLITE_ROW) {
+    // sqlite3_bind_int(stmt, 1, column);
+    const void *buffer = sqlite3_column_blob(stmt, column);
+    printf("%s", (char *)buffer);
+  }
+  free(sql);
 }
