@@ -14,7 +14,6 @@ typedef struct {
 extern gchar *home;
 
 Publication open_file(char *path);
-
-static void extract_contents(char *book, zip_int64_t entries, zip_t *archive);
-
+void extract_contents(char *name, zip_int64_t entries, zip_t *archive);
+void get_row(sqlite3 *database, int row, int column);
 #endif  // PARSER_H_INCLUDED

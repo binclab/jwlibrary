@@ -6,7 +6,9 @@
         "gtk.h": "c",
         "text": "cpp",
         "parser.h": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "soup.h": "c",
+        "stack.h": "c"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.clang_format_fallbackStyle": "Google",
