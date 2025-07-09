@@ -26,4 +26,4 @@ GtkIconTheme *theme;
 
 bool project = true;
 
-#endif  // WINDOW_H_INCLUDED
+#endif // WINDOW_H_INCLUDED

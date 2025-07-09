@@ -15,24 +15,67 @@
 			"problemMatcher": [
 				"$gcc"
 			],
-			"group": "build",
+			"group": "build"
 		},
 		{
 			"type": "shell",
 			"label": "Build",
 			"command": "/usr/bin/ninja",
-			"args": [
-			],
+			"args": ["-C", ".build"],
 			"options": {
-				"cwd": ".build"
+				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": [
-				"$gcc"
+				{
+					"base": "$gcc",
+					"fileLocation": [
+						"relative",
+						"${workspaceFolder}/jwlibrary",
+					]
+				}
 			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
+			}
+		},
+		{
+			"type": "shell",
+			"label": "Launch Application",
+			"command": "/usr/bin/adb",
+			"args": [
+				"shell",
+				"am",
+				"start",
+				"-D",
+				"-n",
+				"org.jw.jwlibrary.mobile/.MainActivity"
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
 			},
+		},
+		{
+			"type": "shell",
+			"label": "setupADB",
+			"command": "/usr/bin/bash",
+			"args": [
+				"-c",
+				"echo l $(adb shell pidof org.jw.jwlibrary.mobile);",
+				"echo ${port};",
+				"adb forward tcp:8700 jdwp:${port};"
+			],
+			"dependsOn": "Launch Application",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
 		}
 	]
 }

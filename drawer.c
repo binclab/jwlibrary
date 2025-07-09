@@ -9,6 +9,5 @@ GtkWidget *create_drawer(GtkStack *winstack)
     connect_drawer_signals();
     populate_drawer();
     g_signal_connect(navbtn, "clicked", (GCallback)show_drawer, NULL);*/
-
     return drawer;
 }

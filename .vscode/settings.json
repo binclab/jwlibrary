@@ -8,9 +8,22 @@
         "parser.h": "c",
         "sstream": "c",
         "soup.h": "c",
-        "stack.h": "c"
+        "stack.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c",
+        "format": "c",
+        "initializer_list": "c",
+        "text_encoding": "c",
+        "variant": "c",
+        "aes.h": "c"
     },
-    "cmake.configureOnOpen": false,
-    "C_Cpp.clang_format_fallbackStyle": "Google",
-    "editor.detectIndentation": false
+    "java.project.sourcePaths": ["java/src"],
+    "java.project.outputPath": ".build",
+    "java.project.referencedLibraries": [
+        "java/lib/**/*.jar"
+    ],
+    "C_Cpp.default.compileCommands": "/home/binclab/jwlibrary/.build/compile_commands.json",
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }

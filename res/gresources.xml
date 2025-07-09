@@ -10,5 +10,6 @@
     <file>icons/256x256/apps/jwlibrary.png</file>
     <file>icons/scalable/icon.svg</file>
     <file>css/style.css</file>
+    <file>constant</file>
   </gresource>
 </gresources>
